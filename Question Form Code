@@ -1,0 +1,365 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+
+namespace GroupProject
+{
+    public partial class quizQuestion1_Form : Form
+    {
+        int scoreCounter = 0; //keeps track of player's current score
+        int questionCounter = 0; //keeps track of current question number
+        int pos;
+        string[] questions = new string[14]; //array to store questions
+        string[] trueAnswer = new string[14]; //array to store correct answers
+        string[] false1 = new string[14]; //array to store incorrect answers
+        string[] false2 = new string[14]; //array to store incorrect answers
+        string[] false3 = new string[14]; //array to store incorrect answers
+
+        Random randomNumber = new Random(); //code to generate random number
+        int random = 0; //number holds the number of the button randomly selected
+        int[] prevRandom = new int[3]; //array to hold the button numbers already used
+        int money = 0;
+
+        bool[] questionUsed = new bool[14];
+
+        public void readInQuestionsAndAnswers()
+        {
+            string questionFileLoc = Path.Combine(Directory.GetCurrentDirectory(), "questions.txt"); //gets location of question text file
+            string trueAnswersFileLoc = Path.Combine(Directory.GetCurrentDirectory(), "trueAnswers.txt"); //gets location of true answers text file
+            string false1FileLoc = Path.Combine(Directory.GetCurrentDirectory(), "false1.txt"); //gets location of false1 answers text file
+            string false2FileLoc = Path.Combine(Directory.GetCurrentDirectory(), "false2.txt"); //gets location of false2 answers text file
+            string false3FileLoc = Path.Combine(Directory.GetCurrentDirectory(), "false3.txt"); //gets location of false3 answers text file
+
+            //Creates questions array
+            string questionsString = File.ReadAllText(questionFileLoc); //reads in questions to a single string
+            string[] questionsSplitArray = questionsString.Split(','); //splits string into seperate array locations
+
+            for (int i = 0; i < questionsSplitArray.Length; i++)
+            {
+                questions[i] = questionsSplitArray[i];
+            }
+
+            //Creates trueAnswer array
+            string trueAnswersString = File.ReadAllText(trueAnswersFileLoc); //reads in questions to a single string
+            string[] trueAnswersSplitArray = trueAnswersString.Split(','); //splits string into seperate array locations
+
+            for (int i = 0; i < trueAnswersSplitArray.Length; i++)
+            {
+                trueAnswer[i] = trueAnswersSplitArray[i];
+            }
+
+            //Creates false1 array
+            string false1String = File.ReadAllText(false1FileLoc); //reads in questions to a single string
+            string[] false1SplitArray = false1String.Split(','); //splits string into seperate array locations
+
+            for (int i = 0; i < false1SplitArray.Length; i++)
+            {
+                false1[i] = false1SplitArray[i];
+            }
+
+            //Creates false2 array
+            string false2String = File.ReadAllText(false2FileLoc); //reads in questions to a single string
+            string[] false2SplitArray = false2String.Split(','); //splits string into seperate array locations
+
+            for (int i = 0; i < false2SplitArray.Length; i++)
+            {
+                false2[i] = false2SplitArray[i];
+            }
+
+            //Creates false2 array
+            string false3String = File.ReadAllText(false3FileLoc); //reads in questions to a single string
+            string[] false3SplitArray = false3String.Split(','); //splits string into seperate array locations
+
+            for (int i = 0; i < false3SplitArray.Length; i++)
+            {
+                false3[i] = false3SplitArray[i];
+            }
+
+        }
+
+        public void questionGenerator() //reads in arrays from text files and assigns buttons and labels to questions and answers
+        {
+            pos = randomNumber.Next(0, 14); //Selects a question at random
+
+
+            if (questionUsed[pos] == true) //if question has already been used, select another question
+            {
+                questionGenerator();
+            }
+
+            else
+            {
+                questionUsed[pos] = true; //otherwise, mark the question as used and continue
+            }
+
+
+            //question 0
+            //questions[0] = "What colour is the sky?"; //Temporary variables for testing purposes
+            //trueAnswer[0] = "Blue";
+            //false1[0] = "Red";
+            //false2[0] = "Green";
+            //false3[0] = "Pink";
+
+            //question 1
+            //questions[1] = "What is the sun?"; //Temporary variables for testing purposes
+            //trueAnswer[1] = "A Star";
+            //false1[1] = "A Ball of Tar";
+            //false2[1] = "Red Sauce";
+            //false3[1] = "A Car";
+
+            quizQuestion1Question_lbl.Text = questions[pos]; //sets question label to the question from the array
+
+        }
+
+
+        public void setButtons(int pos, int random, string[] questions, string[] trueAnswer, string[] false1, string[] false2, string[] false3)
+        {
+            int shuf = 0; //selects which number in the array the answer should go
+            bool found = false; //checks if the random array location is empty
+
+
+            string A1 = trueAnswer[pos];
+            string A2 = false1[pos];
+            string A3 = false2[pos];
+            string A4 = false3[pos];
+
+            string[] answerLoc = new string[4];
+
+            shuf = randomNumber.Next(0,4); //Selects a random array location
+            answerLoc[shuf] = A1; //sets the position of the correct answer
+
+            found = false;
+            while(found == false)
+            {
+	            shuf = randomNumber.Next(0,4); //generate a random number
+	            if (answerLoc[shuf]!= A1) //checks if the array at that position is empty
+                {
+		            answerLoc[shuf] = A2; //if empty, set that position to the first false answer
+		            found = true; //exits the while loop
+	            }
+            }
+
+            found=false;
+            while(found == false)
+            {
+	            shuf = randomNumber.Next(0,4);;
+	            if (answerLoc[shuf]!= A1&&answerLoc[shuf]!=A2)
+                {
+		            answerLoc[shuf] = A3;
+		            found = true;
+	            }
+            }
+
+            found = false;
+            while(found == false)
+            {
+	            shuf = randomNumber.Next(0,4);
+	            if (answerLoc[shuf]!= A1&&answerLoc[shuf]!=A2&&answerLoc[shuf]!=A3)
+                {
+		            answerLoc[shuf] = A4;
+		            found = true;
+	            }
+            }
+
+            //sets each button to the new, randomly generated, array values
+            quizQuestion1A_btn.Text = answerLoc[0];
+            quizQuestion1B_btn.Text = answerLoc[1];
+            quizQuestion1C_btn.Text = answerLoc[2];
+            quizQuestion1D_btn.Text = answerLoc[3];
+
+        }
+
+        public quizQuestion1_Form()
+        {
+            InitializeComponent();
+
+            for (int i = 0; i < questionUsed.Length; i++)
+            {
+                questionUsed[i] = false;
+            }
+
+            readInQuestionsAndAnswers(); //reads in questions and answers from text files
+            questionGenerator(); //loads question generator method
+            setButtons(pos, random, questions, trueAnswer, false1, false2, false3); //sets button text to answers
+            calculateMoney(scoreCounter, money); //calculates money earned
+        }
+
+        public void questionNumberCheck() //Checks to see if 10 questions have been answered
+        {
+            questionCounter++;
+
+            if (questionCounter == 10) //if true, ends game and goes to score screen
+            {
+                Form quizQuestion1Score = new quizScore_Form();
+                quizQuestion1Score.Show();
+                this.Hide();
+            }
+
+        }
+
+        private void quizQuestion1MainMenu_btn_Click(object sender, EventArgs e)
+        {
+            Form quizQuestion1MainMenu = new mainMenu_Form(); //opens main menu
+            quizQuestion1MainMenu.Show();
+            this.Hide();
+        }
+
+        private void quizQuestion1A_btn_Click(object sender, EventArgs e)
+        {
+            if (quizQuestion1A_btn.Text == trueAnswer[pos]) //if correct answer, opens correct message box
+            {
+                MessageBox.Show("Correct!", "", MessageBoxButtons.OK);
+                scoreCounter++;
+            }
+
+            else
+            {
+                MessageBox.Show("Wrong! You lose!!!!", "", MessageBoxButtons.OK);
+
+                Form quizQuestionLose = new mainMenu_Form(); //opens help form
+                quizQuestionLose.Show();
+                this.Hide(); //if incorrect answer, opens incorrect message box
+            }
+
+            questionNumberCheck();
+            questionGenerator(); //loads question generator method
+            setButtons(pos, random, questions, trueAnswer, false1, false2, false3);
+            calculateMoney(scoreCounter, money);
+
+        }
+
+        private void quizQuestion1B_btn_Click(object sender, EventArgs e)
+        {
+            if (quizQuestion1B_btn.Text == trueAnswer[pos])
+            {
+                MessageBox.Show("Correct! ", "", MessageBoxButtons.OK);
+                scoreCounter++;
+            }
+
+            else
+            {
+                MessageBox.Show("Wrong! You lose!!!!", "", MessageBoxButtons.OK);
+
+                Form quizQuestionLose = new mainMenu_Form(); //opens help form
+                quizQuestionLose.Show();
+                this.Hide();
+            }
+
+
+            questionNumberCheck();
+            questionGenerator(); //loads question generator method
+            setButtons(pos, random, questions, trueAnswer, false1, false2, false3);
+            calculateMoney(scoreCounter, money);
+        }
+
+        private void quizQuestion1C_btn_Click(object sender, EventArgs e)
+        {
+            if (quizQuestion1C_btn.Text == trueAnswer[pos])
+            {
+                MessageBox.Show("Correct! ", "", MessageBoxButtons.OK);
+                scoreCounter++;
+            }
+
+            else
+            {
+                MessageBox.Show("Wrong! You lose!!!!", "", MessageBoxButtons.OK);
+
+                Form quizQuestionLose = new mainMenu_Form(); //opens help form
+                quizQuestionLose.Show();
+                this.Hide();
+            }
+
+            questionNumberCheck();
+            questionGenerator(); //loads question generator method
+            setButtons(pos, random, questions, trueAnswer, false1, false2, false3);
+            calculateMoney(scoreCounter, money);
+        }
+
+        private void quizQuestion1D_btn_Click(object sender, EventArgs e)
+        {
+            if (quizQuestion1D_btn.Text == trueAnswer[pos])
+            {
+                MessageBox.Show("Correct! ", "", MessageBoxButtons.OK);
+                scoreCounter++;
+            }
+
+            else
+            {
+                MessageBox.Show("Wrong! You lose!!!!", "", MessageBoxButtons.OK);
+
+                Form quizQuestionLose = new mainMenu_Form(); //opens help form
+                quizQuestionLose.Show();
+                this.Hide();
+
+            }
+
+            questionNumberCheck();
+            questionGenerator(); //loads question generator method
+            setButtons(pos, random, questions, trueAnswer, false1, false2, false3);
+            calculateMoney(scoreCounter, money);
+        }
+
+        private void quizQuestionHelp_btn_Click(object sender, EventArgs e)
+        {
+            Form quizQuestion1Help = new quizHelp_Form(); //opens help form
+            quizQuestion1Help.Show();
+        }
+
+        private void quizQuestion1NextQuestion_btn_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        public void calculateMoney(int scoreCounter, int money)
+        {
+            if(scoreCounter == 1){
+                money = 500;
+            }
+            if (scoreCounter == 2)
+            {
+                money = 1000;
+            }
+            if (scoreCounter == 3)
+            {
+                money = 2500;
+            }
+            if (scoreCounter == 4)
+            {
+                money = 5000;
+            }
+            if (scoreCounter == 5)
+            {
+                money = 10000;
+            }
+            if (scoreCounter == 6)
+            {
+                money = 25000;
+            }
+            if (scoreCounter == 7)
+            {
+                money = 50000;
+            }
+            if (scoreCounter == 8)
+            {
+                money = 100000;
+            }
+            if (scoreCounter == 9)
+            {
+                money = 250000;
+            }
+
+
+
+            quizQuestion1Money_lbl.Text = "Money earned - £" + money + "!";
+        }
+    }
+}
+
